@@ -4,10 +4,11 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 public class ParkingSpotDto {
-    @NotBlank
+
+    @NotBlank//anotation para verificar se o campo não está vázio
     private String parkingSpotNumber;
     @NotBlank
-    @Size(max = 7)
+    @Size(max = 7)//anotação para verificar se o atributo tem no máximo 7 caracteres
     private String licensePlateCar;
     @NotBlank
     private String brandCar;
