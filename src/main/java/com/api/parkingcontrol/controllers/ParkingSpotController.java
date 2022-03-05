@@ -7,6 +7,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,13 +52,23 @@ public class ParkingSpotController {
     }
 
     @RequestMapping("/page")
-    public ResponseEntity<Page<ParkingSpotModel>> getAllParkingSpot(Pageable pageable){
+    public ResponseEntity<Page<ParkingSpotModel>> getAllParkingSpot(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
         return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findAll(pageable));
     }
 
     @RequestMapping("/{id}")
-    public ResponseEntity<Object> getAllParkingSpot(@PathVariable UUID id){
+    public ResponseEntity<Object> getByIdParkingSpot(@PathVariable UUID id){
         return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findById(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteByIdParkingSpot(@PathVariable UUID id){
+        return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.deleteById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateByIdParkingSpot(@PathVariable UUID id,  @RequestBody @Valid ParkingSpotDto parkingSpotDto){
+        return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.updateById(id, parkingSpotDto));
     }
 
 

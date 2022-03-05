@@ -1,7 +1,9 @@
 package com.api.parkingcontrol.services;
 
+import com.api.parkingcontrol.dtos.ParkingSpotDto;
 import com.api.parkingcontrol.models.ParkingSpotModel;
 import com.api.parkingcontrol.repositories.ParkingSpotRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,5 +58,28 @@ public class ParkingSpotService {
         }
     }
 
+    @Transactional
+    public ResponseEntity<Object> deleteById(UUID id) {
+        var result = parkingSpotRepository.findById(id);
+        if(!result.isPresent()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot Not Found!");
+        }else{
+            parkingSpotRepository.deleteById(id);
+            return ResponseEntity.status(HttpStatus.OK).body("successfully deleted parking spot");
+        }
+    }
 
+    public ResponseEntity<Object> updateById(UUID id, ParkingSpotDto parkingSpotDto) {
+
+        var result = parkingSpotRepository.findById(id);
+        if(!result.isPresent()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot Not Found");
+        }else{
+            var parkingSpotModel = new ParkingSpotModel();
+            BeanUtils.copyProperties(parkingSpotDto, parkingSpotModel);
+            parkingSpotModel.setId(result.get().getId());
+            parkingSpotModel.setRegistrationDate(result.get().getRegistrationDate());
+            return ResponseEntity.status(HttpStatus.CREATED).body(this.save(parkingSpotModel));
+        }
+    }
 }
